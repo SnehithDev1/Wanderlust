@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-md bg-white border-bottom sticky-top custom-airbnb-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand text-danger fs-3" href="/">
+      <i class="fa-brands fa-airbnb"></i>
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      
+      <div class="navbar-nav">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/listings">All Listings</a>
+        <a class="nav-link" href="/listings/new">Add New</a>
+         <form class="d-flex" role="search" method="get" action="/listings/search">
+        <input class="form-control me-2 ms-auto" name="q"type="search" placeholder="Search destinations" aria-label="Search"/>
+        <div class="search-btn">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+        </div>
+      </form>
+      </div>
+
+
+      <div class="navbar-nav ms-auto align-items-center gap-2">
+        <% if(!currUser) { %>
+          <a class="nav-link fw-bold" href="/signup">Sign Up</a>
+          <a class="nav-link fw-bold" href="/login">Login</a>
+        <% } else { %>
+          
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              
+              <img src="<%= currUser.profilePic || 'https://t4.ftcdn.net/jpg/00/65/48/25/360_F_65482539_C0ZozE5gUjCafz7Xq98WB4dW6LAhqKfs.jpg' %>" 
+                   alt="Profile" 
+                   class="shadow-sm me-2" 
+                   style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                   
+              <span class="fw-semibold text-dark"><%= currUser.username %></span>
+            </a>
+            
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item text-danger fw-bold" href="/logout">
+                  <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Log Out
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+        <% } %>
+      </div>
+      
+    </div>
+  </div>
+</nav>

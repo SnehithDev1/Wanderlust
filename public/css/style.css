@@ -1,0 +1,168 @@
+.body{
+    font-family: "Exo 2", sans-serif !important;
+}
+.listing-link{
+    text-decoration: none !important;
+}
+.navbar{
+    height: 5rem;
+    background-color: #ffffff !important; /* Forces total opacity */
+    opacity: 1 !important;
+    z-index: 1030 !important; /* Locks the navbar on top of the listing images */
+    color: #222222 !important;
+    /* Applies the premium font ONLY to the navbar */
+    font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif !important;
+}
+
+/* Scoped specifically to the navbar logo so it doesn't break other brand icons */
+.navbar-brand .fa-brands{
+    color: #FF385C !important; /* Airbnb Red */
+    font-size: 2.2rem;
+}
+.nav-link{
+    color: #222222 !important;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover{
+    color: #FF385C !important;
+}
+.navbar .dropdown-toggle::after {
+    display: none;
+}
+
+
+.f-info-links{
+    text-decoration: none !important;
+    color: #222222 !important;
+    width: 100%;
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+}
+.f-info{
+    height: 9rem;
+    background-color: aliceblue;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items:space-evenly;
+    text-align: center;
+}
+.f-info-socials,.f-info-links,.f-info-brands{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-right: 2rem;
+}
+.card{
+    border: none !important;
+    margin-bottom: 4rem !important;
+    border-radius: 3rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+.card:hover{
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+}
+.row.row-cols-1{
+    margin-bottom: 8rem !important;
+}
+.card-img-top {
+    border-radius: 2rem !important;
+    width: 100% !important;
+    height: 20rem !important; /* This forces the "cookie cutter" height */
+    object-fit: cover !important; /* This ensures the image crops perfectly to fit the height instead of stretching */
+}
+.card-body{
+    padding-bottom: 1.5rem !important;
+}
+.card-text p{
+    font-weight: 400 !important;
+}
+.col{
+    margin-bottom: 1rem;
+}
+.card-text p{
+    font-weight: 400 !important;
+}
+.col{
+    margin-bottom: 1rem;
+}
+.card-img-overlay {
+    /* 1. Set the dark color here, instead of 'transparent' */
+    background-color: rgba(0, 0, 0, 0.4) !important; 
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 20rem !important; 
+    z-index: 10 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* 2. Match the image's border-radius so the dark overlay doesn't have ugly, sharp corners! */
+    border-radius: 2rem !important; 
+    
+    /* 3. Ensure the overlay doesn't block the cursor from triggering the hover */
+    pointer-events: none !important; 
+}
+
+.card:hover .card-img-overlay {
+    /* Only transition the opacity; the color is already handled */
+    opacity: 1 !important; 
+}
+
+/* Listing show page styles */
+.listing-hero {
+    height: 420px;
+    overflow: hidden;
+}
+.listing-hero-img{
+    height: 420px;
+    object-fit: cover;
+}
+.listing-title{
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+.listing-meta{
+    font-size: 0.95rem;
+}
+.booking-card{
+    position: sticky;
+    top: 80px;
+}
+.listing-show .lead{
+    font-size: 1.05rem;
+    color: #333;
+}
+
+@media (max-width: 767px) {
+    .listing-hero, .listing-hero-img {
+        height: 220px;
+    }
+    
+    .booking-card {
+        position: static; 
+        margin-top: 1rem;
+    }
+    
+    
+    #navbarNavAltMarkup {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+}
+.search-btn{
+    border-radius: 26px !important;
+    
+}
