@@ -1,4 +1,5 @@
 const Listing=require("../models/listing.js");
+const ExpressError = require("../utils/ExpressError");
 
 module.exports.Index=async(req,res)=>{
     let allListings=await Listing.find({});
@@ -30,51 +31,61 @@ module.exports.searchListing = async (req, res) => {
     res.render("listings/index.ejs", { allListings, msg: req.flash("msg") });
 }
 
-module.exports.createNewListing=async(req,res,next)=>{
-
-    
-    if(!req.body || Object.keys(req.body).length===0){
-        throw new ExpressError(400,"Data payload not received");
+module.exports.createNewListing = async (req, res, next) => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+        throw new ExpressError(400, "Data payload not received");
     }
-    let {title, description, price, location, country, image}=req.body;
-    let url=req.file.path;
-    let filename=req.file.filename;
 
-    //GEOCODING
+    let { title, description, price, location, country } = req.body;
+    let url = req.file.path;
+    let filename = req.file.filename;
+
+    // GEOCODING: Default Fallback Setup
     const address = `${location}, ${country}`;
     const geoUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
-    
-    // Nominatim requires a valid User-Agent header
-    const response = await fetch(geoUrl, {
-        headers: { 'User-Agent': 'WanderlustApp/1.0' } 
-    });
-    const geoData = await response.json();
-    
-    // Default to Center of India if API fails or location is totally invalid
     let geometry = { type: "Point", coordinates: [78.9629, 20.5937] }; 
-    if (geoData.length > 0) {
-        geometry.coordinates = [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)];
+
+    // Defensive API Call
+    try {
+        const response = await fetch(geoUrl, {
+            headers: { 'User-Agent': 'WanderlustApp/1.0' } 
+        });
+        
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const geoData = await response.json();
+                if (geoData.length > 0) {
+                    geometry.coordinates = [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)];
+                }
+            } else {
+                console.log("Create: Geocoding API returned non-JSON data. Using fallback.");
+            }
+        } else {
+            console.log(`Create: Geocoding API failed with status ${response.status}. Using fallback.`);
+        }
+    } catch (err) {
+        console.log("Create: Network error contacting Geocoding API:", err.message);
     }
 
-    let newlist=new Listing({
-        title:title,
-        description:description,
-        price:price,
-        location:location,
-        country:country, 
-        image:{
-            url:url,
-            filename:filename
+    let newlist = new Listing({
+        title: title,
+        description: description,
+        price: price,
+        location: location,
+        country: country, 
+        image: {
+            url: url,
+            filename: filename
         },
-        geometry:geometry,
-        owner:req.user._id
+        geometry: geometry,
+        owner: req.user._id
     });
-    await newlist.save();
-        req.flash("success","Successfully created");
-        
-    res.redirect("/listings");
-}
 
+    await newlist.save();
+    req.flash("success", "Successfully created new listing!");
+    res.redirect("/listings");
+};
 
 module.exports.showListing=async (req,res)=>{
     let {id}=req.params;
@@ -99,32 +110,43 @@ module.exports.updateListing = async (req, res) => {
     let { id } = req.params;
     let { title, description, price, location, country } = req.body;
 
-    //GEOCODING 
+    // GEOCODING: Default Fallback Setup
     const address = `${location}, ${country}`;
     const geoUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
-    
-    const response = await fetch(geoUrl, {
-        headers: { 'User-Agent': 'WanderlustApp/1.0' } 
-    });
-    const geoData = await response.json();
-    
     let geometry = { type: "Point", coordinates: [78.9629, 20.5937] }; 
-    if (geoData.length > 0) {
-        geometry.coordinates = [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)];
+
+    // Defensive API Call
+    try {
+        const response = await fetch(geoUrl, {
+            headers: { 'User-Agent': 'WanderlustApp/1.0' } 
+        });
+        
+        if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const geoData = await response.json();
+                if (geoData.length > 0) {
+                    geometry.coordinates = [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)];
+                }
+            } else {
+                console.log("Update: Geocoding API returned non-JSON data. Using fallback.");
+            }
+        } else {
+            console.log(`Update: Geocoding API failed with status ${response.status}. Using fallback.`);
+        }
+    } catch (err) {
+        console.log("Update: Network error contacting Geocoding API:", err.message);
     }
 
-    // 1. Prepare the standard text data updates
     let updateData = {
         title: title,
         description: description,
         price: price,
         location: location,
         country: country,
-        geometry:geometry
+        geometry: geometry
     };
 
-    // 2. Conditionally check if a new file was uploaded
-    // If req.file exists, add the new image data to our update object
     if (req.file) {
         updateData.image = {
             url: req.file.path,
@@ -132,12 +154,11 @@ module.exports.updateListing = async (req, res) => {
         };
     }
 
-    // 3. Perform a single database update
     await Listing.findByIdAndUpdate(id, updateData);
-
     req.flash("success", "Updated Successfully");
     res.redirect(`/listings/${id}`);
-}
+};
+
 module.exports.DeleteListing=async(req,res)=>{
     let {id}=req.params;
 
